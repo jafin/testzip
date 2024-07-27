@@ -8,7 +8,11 @@ Very simple command line tool to test zip/rar archives using 7z.exe (windows).
 
 ## Usage
 
+```
 testzip <path>
+```
+
+Path being the folder (and all subfolders) to scan for valid zip, rar, 7z files.
 
 ### Example
 
