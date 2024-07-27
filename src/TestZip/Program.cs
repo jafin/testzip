@@ -13,7 +13,8 @@ partial class Program
     static async Task Main(string[] args)
     {
         (await Parser.Default.ParseArguments<Options>(args)
-            .WithParsedAsync(RunOptions)).WithNotParsed(HandleParseError);
+            .WithParsedAsync(RunOptions))
+            .WithNotParsed(HandleParseError);
     }
 
     static async Task RunOptions(Options opts)
@@ -67,24 +68,25 @@ partial class Program
 
     private static async Task ScanDir(string directory)
     {
+        List<string> compressedExtensions = [".zip", ".rar", ".7z"];
+
         foreach (var file in Directory.GetFiles(directory))
         {
             var extension = Path.GetExtension(file).ToLower();
-            Path.GetFileName(file);
-            if (extension is ".zip" or ".rar")
+            if (compressedExtensions.Contains(extension))
             {
                 if (extension == ".rar")
                 {
                     var partFile = RegexPartMatch().Match(file).Success;
                     if (partFile)
                     {
-                        Console.WriteLine($"  Skipping partFile: {file}");
+                        Console.WriteLine($"Skipping partFile: {file}");
                         return;
                     }
                 }
 
                 Console.WriteLine($"  File: {file}");
-                var isValid = await TestArchive(file, extension);
+                var isValid = await TestArchive(file);
                 Console.WriteLine($"  {Path.GetFileName(file)} - {(isValid ? "Valid" : "Invalid")}");
                 if (!isValid)
                 {
@@ -98,7 +100,7 @@ partial class Program
         }
     }
 
-    static async Task<bool> TestArchive(string filePath, string extension)
+    static async Task<bool> TestArchive(string filePath)
     {
         try
         {
@@ -112,24 +114,22 @@ partial class Program
                 CreateNoWindow = true
             };
 
-            using (var process = new Process { StartInfo = psi })
+            using var process = new Process { StartInfo = psi };
+            process.OutputDataReceived += (sender, e) =>
             {
-                process.OutputDataReceived += (sender, e) =>
-                {
-                    if (e.Data != null) Console.WriteLine(e.Data);
-                };
-                process.ErrorDataReceived += (sender, e) =>
-                {
-                    if (e.Data != null) Console.WriteLine(e.Data);
-                };
+                if (e.Data != null) Console.WriteLine(e.Data);
+            };
+            process.ErrorDataReceived += (sender, e) =>
+            {
+                if (e.Data != null) Console.WriteLine(e.Data);
+            };
 
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
 
-                await process.WaitForExitAsync();
-                return process.ExitCode == 0;
-            }
+            await process.WaitForExitAsync();
+            return process.ExitCode == 0;
         }
         catch (Exception ex)
         {
@@ -137,33 +137,6 @@ partial class Program
             return false;
         }
     }
-
-    // static bool TestArchive1(string filePath, string extension)
-    // {
-    //     try
-    //     {
-    //         if (extension == ".zip")
-    //         {
-    //             using var archive = ZipFile.OpenRead(filePath);
-    //             // If we can open and read the archive, it's considered valid
-    //             return true;
-    //         }
-    //
-    //         if (extension == ".rar")
-    //         {
-    //             using var archive = RarArchive.Open(filePath);
-    //             // If we can open and read the archive, it's considered valid
-    //             return true;
-    //         }
-    //     }
-    //     catch (Exception)
-    //     {
-    //         // If an exception occurs, the archive is considered invalid
-    //         return false;
-    //     }
-    //
-    //     return false;
-    // }
 
     static void DisplayInvalidArchives()
     {
