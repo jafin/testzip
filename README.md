@@ -1,6 +1,6 @@
 # testzip
 
-Very simple command line tool to recursively test zip/rar archives in a folder tree using 7z.exe (windows).
+Basic command line tool to recursively test zip/rar archives in a folder tree using 7z.exe (windows).
 
 ## Requirements and limitations
 
