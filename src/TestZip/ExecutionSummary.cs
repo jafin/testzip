@@ -2,14 +2,25 @@
 
 public class ExecutionSummary
 {
-    public List<string> InvalidArchives { get; set; } = new();
+    private List<string> InvalidArchives { get; } = new();
 
-    public List<string> ValidArchives { get; set; } = new();
+    private List<string> ValidArchives { get; } = new();
 
     public void PrintSummary()
     {
         Console.WriteLine($"Valid archives: {ValidArchives.Count}");
         Console.WriteLine($"Invalid archives: {InvalidArchives.Count}");
+    }
+
+
+    public void AddInvalidArchive(string archive)
+    {
+        InvalidArchives.Add(archive);
+    }
+
+    public void AddValidArchive(string archive)
+    {
+        ValidArchives.Add(archive);
     }
 
     public void DisplayInvalidArchives()

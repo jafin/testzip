@@ -7,7 +7,6 @@ public partial class TestArchiveCommandHandler
     private readonly ZipProcess _zipProcess;
     private readonly ExecutionSummary _executionSummary;
 
-
     public TestArchiveCommandHandler(ExecutionSummary executionSummary, ZipProcess zipProcess)
     {
         _zipProcess = zipProcess;
@@ -67,11 +66,11 @@ public partial class TestArchiveCommandHandler
                 Console.WriteLine($"  {Path.GetFileName(file)} - {(isValid ? "Valid" : "Invalid")}");
                 if (!isValid)
                 {
-                    _executionSummary.InvalidArchives.Add(file);
+                    _executionSummary.AddInvalidArchive(file);
                 }
                 else
                 {
-                    _executionSummary.ValidArchives.Add(file);
+                    _executionSummary.AddValidArchive(file);
                 }
             }
         }

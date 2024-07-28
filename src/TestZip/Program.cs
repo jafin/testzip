@@ -20,7 +20,7 @@ static class Program
                 // Register your dependencies here
                 builder.RegisterType<ExecutionSummary>().As<ExecutionSummary>().SingleInstance();
                 builder.RegisterType<AppRunner>().As<AppRunner>();
-                builder.RegisterType<Commands.TestArchiveCommandHandler>().AsSelf();
+                builder.RegisterType<TestArchiveCommandHandler>().AsSelf();
                 builder.RegisterType<ZipProcess>().AsSelf();
             })
             // .ConfigureServices((hostContext, services) =>
